@@ -9,6 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  firebase_core: ^2.31.0  # Wajib untuk semua proyek Firebase
+  firebase_auth: ^4.19.4 # Untuk layanan autentikasi
+  cloud_firestore: ^4.13.0
+  url_launcher: ^6.2.5
+
 
 dev_dependencies:
   flutter_test:

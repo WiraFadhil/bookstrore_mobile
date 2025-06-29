@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1092464298683",
+    "project_id": "penjualanbuku-46f7e",
+    "storage_bucket": "penjualanbuku-46f7e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092464298683:android:6c0e931db9b78a9ba5379e",
+        "android_client_info": {
+          "package_name": "com.example.final_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7CKXWpLDwV3rtMsn3KklKWaBDx2TcQs8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

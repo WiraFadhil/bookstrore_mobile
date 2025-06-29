@@ -1,26 +1,60 @@
-import 'package:flutter/material.dart';
-import '/../constants/colors.dart';
-import '/../widgets/custom_textfield.dart'; // Komponen input yang kamu buat sendiri
-import '../daftar/register.screen.dart';    // Halaman daftar
+// lib/pages/login_screen.dart
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+import 'package:flutter/material.dart';
+import 'package:final_project/auth/auth_service.dart';
+import 'package:final_project/constants/colors.dart';
+
+class LoginScreen extends StatefulWidget {
+  final void Function()? onTap;
+  const LoginScreen({super.key, required this.onTap});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
+  bool _showPassword = false;
+
+  void login(BuildContext context) async {
+    // Tampilkan loading
+    showDialog(
+      context: context,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      // Panggil fungsi login dari AuthService
+      await _authService.signInWithEmailAndPassword(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (context.mounted) Navigator.pop(context); // Tutup loading
+    } catch (e) {
+      if (context.mounted) Navigator.pop(context); // Tutup loading
+
+      // Tampilkan error
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Warna background halaman
       backgroundColor: AppColors.background,
-
-      // Biar konten bisa di-scroll kalo layar kecil
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-
           child: Column(
             children: [
-
-              // Logo + Nama Aplikasi
               const SizedBox(height: 40),
               const CircleAvatar(
                 radius: 30,
@@ -38,10 +72,9 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               const Text("Selamat datang kembali!"),
-
               const SizedBox(height: 30),
 
-              // Kartu formulir login
+              // FORM LOGIN
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -51,8 +84,6 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
-                    // Judul
                     const Text(
                       "Masuk",
                       style: TextStyle(
@@ -64,67 +95,70 @@ class LoginScreen extends StatelessWidget {
                     const Text("Masuk ke akun Anda untuk melanjutkan"),
                     const SizedBox(height: 16),
 
-                    // Input email
-                    const CustomTextField(
-                      hint: "nama@email.com",
-                      icon: Icons.email_outlined,
+                    TextField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: Icon(Icons.email),
+                      ),
                     ),
                     const SizedBox(height: 16),
-
-                    // Input password
-                    const CustomTextField(
-                      hint: "Password Anda",
-                      icon: Icons.lock_outline,
-                      obscure: true,
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: !_showPassword,
+                      decoration: InputDecoration(
+                        labelText: "Password",
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _showPassword = !_showPassword;
+                            });
+                          },
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 8),
 
-                    // Tombol "Lupa password?"
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () {
-                          // TODO: Tambahkan aksi lupa password
+                          // Bisa tambahkan lupa password nanti
                         },
                         child: const Text("Lupa password?"),
                       ),
                     ),
 
-                    // Tombol Masuk
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        onPressed: () {
-                          // TODO: Tambahkan logika login
-                        },
-                        child: const Text("Masuk"),
+                        onPressed: () => login(context),
+                        child: const Text('Login'),
                       ),
                     ),
 
                     const SizedBox(height: 8),
 
-                    // Tautan ke halaman daftar
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text("Belum punya akun?"),
                         const SizedBox(width: 4),
                         TextButton(
-                          onPressed: () {
-                            // Pindah ke halaman daftar
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const RegisterScreen(),
-                              ),
-                            );
-                          },
+                          onPressed: widget.onTap,
                           child: const Text("Daftar Sekarang"),
                         ),
                       ],
@@ -134,8 +168,6 @@ class LoginScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
-
-              // Catatan demo
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
